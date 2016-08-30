@@ -4,8 +4,9 @@ import 'isomorphic-fetch'
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
-import { Router, browserHistory } from 'react-router'
+import { applyRouterMiddleware, browserHistory, Router } from 'react-router'
 import { syncHistoryWithStore } from 'react-router-redux'
+import { useScroll } from 'react-router-scroll'
 import { persistStore, storages } from 'redux-persist'
 
 import './main.sass'
@@ -35,13 +36,21 @@ Honeybadger.configure({
 
 updateTimeAgoStrings({ about: '' })
 
+function shouldScroll(prevRouterProps, { location }) {
+  return !!(location.action === 'REPLACE')
+}
+
 const APP_VERSION = '3.0.21'
 
 const history = syncHistoryWithStore(browserHistory, store)
 const routes = createRoutes(store)
 const element = (
   <Provider store={store}>
-    <Router history={history} routes={routes} />
+    <Router
+      history={history}
+      render={applyRouterMiddleware(useScroll(shouldScroll))}
+      routes={routes}
+    />
   </Provider>
 )
 

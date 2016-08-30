@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from 'react'
+import { ScrollContainer } from 'react-router-scroll'
 import _ from 'lodash'
 import { connect } from 'react-redux'
 import { GUI, LOAD_STREAM_SUCCESS } from '../../constants/action_types'
@@ -122,30 +123,32 @@ class NotificationsContainer extends Component {
           tabClasses="IconTab"
           tabs={tabs}
         />
-        <div
-          className="Scrollable"
-          ref={(comp) => { this.scrollContainer = comp }}
+        <ScrollContainer
+          scrollKey="notificationPopover"
         >
-          {
-            isReloading ?
-              <Paginator
-                className="NotificationReload"
-                isHidden={false}
-                totalPages={0}
-                totalPagesRemaining={0}
-              /> :
-              null
-          }
-          <StreamContainer
-            action={streamAction}
-            className="isFullWidth"
-            key={`notificationView_${activeTabType}`}
-            ref={(comp) => { this.streamContainer = comp }}
-            scrollContainer={this.scrollContainer}
-            scrollSessionKey={`notifications_${activeTabType}`}
-            isModalComponent
-          />
-        </div>
+          <div
+            className="Scrollable"
+            ref={(comp) => { this.scrollContainer = comp }}
+          >
+            {
+              isReloading ?
+                <Paginator
+                  className="NotificationReload"
+                  isHidden={false}
+                  totalPages={0}
+                  totalPagesRemaining={0}
+                /> :
+                null
+            }
+            <StreamContainer
+              action={streamAction}
+              className="isFullWidth"
+              key={`notificationView_${activeTabType}`}
+              isModalComponent
+              scrollContainer={this.scrollContainer}
+            />
+          </div>
+        </ScrollContainer>
       </div>
     )
   }

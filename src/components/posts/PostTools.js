@@ -26,7 +26,7 @@ const ViewsTool = ({ detailLink, isLoggedIn, postViewsCountRounded }) =>
 ViewsTool.propTypes = {
   detailLink: PropTypes.string.isRequired,
   isLoggedIn: PropTypes.bool.isRequired,
-  postViewsCountRounded: PropTypes.string.isRequired,
+  postViewsCountRounded: PropTypes.string,
 }
 
 const TimeAgoTool = ({ detailLink, post }) =>
