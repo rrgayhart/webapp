@@ -11,6 +11,7 @@ import { NavbarProfile } from './NavbarProfile'
 import {
   BoltIcon, CircleIcon, GridIcon, ListIcon, SearchIcon, SparklesIcon, StarIcon,
 } from './NavbarIcons'
+import { BubbleIcon } from '../posts/PostIcons'
 // yuck..
 import NotificationsContainer from '../../containers/notifications/NotificationsContainer'
 
@@ -83,6 +84,7 @@ export const NavbarLoggedIn = ({
   notificationCategory,
   onClickAvatar,
   onClickLoadMorePosts,
+  onClickMessages,
   onClickNavbarMark,
   onClickNotification,
   onClickOmniButton,
@@ -135,6 +137,14 @@ export const NavbarLoggedIn = ({
         to="/starred"
       />
       <NavbarLink
+        className="IconOnly"
+        icon={<BubbleIcon />}
+        label="Messages"
+        onClick={isElloAndroid() || deviceSize === 'mobile' ? null : onClickMessages}
+        pathname={pathname}
+        to="/messages"
+      />
+      <NavbarLink
         className={classNames('IconOnly', { isNotificationsUnread })}
         icon={<BoltIcon />}
         label="Notifications"
@@ -182,6 +192,7 @@ NavbarLoggedIn.propTypes = {
   notificationCategory: PropTypes.string.isRequired,
   onClickAvatar: PropTypes.func.isRequired,
   onClickLoadMorePosts: PropTypes.func.isRequired,
+  onClickMessages: PropTypes.func.isRequired,
   onClickNavbarMark: PropTypes.func.isRequired,
   onClickNotification: PropTypes.func.isRequired,
   onClickOmniButton: PropTypes.func.isRequired,

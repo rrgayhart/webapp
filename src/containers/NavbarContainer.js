@@ -22,9 +22,11 @@ import { logout } from '../actions/authentication'
 import { setIsProfileMenuActive, toggleNotifications } from '../actions/gui'
 import { checkForNewNotifications } from '../actions/notifications'
 import { openOmnibar } from '../actions/omnibar'
+import { openModal } from '../actions/modals'
 import { updateRelationship } from '../actions/relationships'
 import { loadFriends, loadNoise } from '../actions/stream'
 import { NavbarLoggedIn, NavbarLoggedOut } from '../components/navbar/Navbar'
+import MessagesContainer from '../containers/MessagesContainer'
 import { getDiscoverAction } from '../containers/DiscoverContainer'
 import Session from '../vendor/session'
 
@@ -114,6 +116,12 @@ class NavbarContainer extends Component {
     const { dispatch } = this.props
     dispatch({ type: ADD_NEW_IDS_TO_RESULT })
     scrollToTop()
+  }
+
+  onClickMessages = (e) => {
+    if (e) { e.preventDefault() }
+    const { dispatch } = this.props
+    dispatch(openModal(<MessagesContainer activeConversation="1" />))
   }
 
   onClickNavbarMark = () => {
@@ -224,6 +232,7 @@ class NavbarContainer extends Component {
           onClickAvatar={this.onClickAvatar}
           onClickDocument={this.onClickDocument}
           onClickLoadMorePosts={this.onClickLoadMorePosts}
+          onClickMessages={this.onClickMessages}
           onClickNavbarMark={this.onClickNavbarMark}
           onClickNotification={this.onClickNotification}
           onClickOmniButton={this.onClickOmniButton}
