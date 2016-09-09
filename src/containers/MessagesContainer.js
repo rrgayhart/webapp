@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from 'react'
+import FormButton from '../components/forms/FormButton'
 
 class MessagesContainer extends Component {
 
@@ -6,16 +7,29 @@ class MessagesContainer extends Component {
     activeConversation: PropTypes.string,
   }
 
+  onClickStartConversation = () => {
+    console.log('click start convo')
+  }
+
   render() {
     return (
       <div className="Dialog MessagesDialog">
         <h2>Messages</h2>
-        <div className="Conversations">
-        </div>
-        <div className="Messages">
-        </div>
-        <input type="textarea" className="TextInput">
-        </input>
+        <FormButton
+          className="FormButton isRounded isAutoSize"
+          onClick={this.onClickStartConversation}
+        >
+          Start Conversation
+        </FormButton>
+        <div className="Conversations" />
+        <div className="Messages" />
+        <input type="textarea" className="TextInput" />
+        <FormButton
+          className="FormButton isRounded isAutoSize Send"
+          onClick={this.onClickStartConversation}
+        >
+          Send
+        </FormButton>
       </div>
     )
   }
