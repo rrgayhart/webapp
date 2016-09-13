@@ -1,0 +1,37 @@
+.Dialog.MessagesDialog {
+  padding: 0;
+}
+
+.MessagesDialog {
+  width: 800px;
+}
+
+.MessagesDialog .Conversations {
+  position: absolute;
+  width: 25%;
+  min-height: 400px;
+  background-color: #fefefe;
+}
+
+.MessagesDialog .Messages {
+  width: 75%;
+  min-height: 400px;
+  margin-left: 25%;
+  background-color: #aaa;
+}
+
+.MessagesDialog .TextInput {
+  position: absolute;
+  bottom: 0;
+  left: 25%;
+  width: calc(75% - 100px);
+  min-height: 40px;
+  background-color: #666;
+}
+
+.MessagesDialog .Send {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+}
+
