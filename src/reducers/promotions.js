@@ -1,10 +1,11 @@
-import { fromJS } from 'immutable'
+/* eslint-disable new-cap */
+import Immutable from 'immutable'
 import { PROMOTIONS } from '../constants/action_types'
 
-const initialState = fromJS({
-  authentication: [],
-  loggedIn: [],
-  loggedOut: [],
+const initialState = Immutable.Map({
+  authentication: Immutable.List(),
+  loggedIn: Immutable.List(),
+  loggedOut: Immutable.List(),
 })
 
 export default (state = initialState, action) => {

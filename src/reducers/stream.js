@@ -1,8 +1,12 @@
+/* eslint-disable new-cap */
+import Immutable from 'immutable'
 import { AUTHENTICATION, POST, PROFILE, USER } from '../constants/action_types'
 
-export function stream(state = {}, action = { type: '' }) {
+const initialState = Immutable.Map()
+
+export default (state = initialState, action = { type: '' }) => {
   if (action.type === AUTHENTICATION.LOGOUT || action.type === PROFILE.DELETE_SUCCESS) {
-    return {}
+    return initialState
   } else if (!(action.type === POST.DETAIL_SUCCESS || action.type === USER.DETAIL_SUCCESS ||
                action.type === POST.DETAIL_FAILURE || action.type === USER.DETAIL_FAILURE) &&
              !(action.type.indexOf('COMMENT.') === 0 && action.type.indexOf('SUCCESS') > -1) &&
@@ -16,16 +20,8 @@ export function stream(state = {}, action = { type: '' }) {
              action.type.indexOf('LOAD_NEXT_CONTENT_') === 0 ||
              (action.type.indexOf('COMMENT.') === 0 && action.type.indexOf('SUCCESS') > -1) ||
              (action.type.indexOf('POST.') === 0 && action.type.indexOf('SUCCESS') > -1)) {
-    return {
-      ...state,
-      error: action.error,
-      meta: action.meta,
-      payload: action.payload,
-      type: action.type,
-    }
+    return state.merge(action)
   }
   return state
 }
-
-export default stream
 
