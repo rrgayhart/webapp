@@ -27,8 +27,10 @@ import ViewportContainer from '../containers/ViewportContainer'
 import { scrollTo } from '../lib/jello'
 
 function mapStateToProps(state) {
+  const isLoggedIn = selectIsLoggedIn(state)
+  console.log('isLoggedIn', isLoggedIn)
   return {
-    isLoggedIn: selectIsLoggedIn(state),
+    isLoggedIn,
   }
 }
 

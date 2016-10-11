@@ -38,7 +38,8 @@ const routes = (store, isServer = false) => {
       return {
         ...route,
         onEnter(nextState, replace) {
-          const { authentication: { isLoggedIn } } = store.getState()
+          // const { authentication: { isLoggedIn } } = store.getState()
+          const isLoggedIn = store.getState().getIn(['authentication', 'isLoggedIn'])
           if (!isLoggedIn) {
             replace({ pathname: '/enter', state: nextState })
           }
@@ -49,7 +50,8 @@ const routes = (store, isServer = false) => {
     return {
       ...route,
       onEnter(nextState, replace) {
-        const { authentication: { isLoggedIn } } = store.getState()
+        // const { authentication: { isLoggedIn } } = store.getState()
+        const isLoggedIn = store.getState().getIn(['authentication', 'isLoggedIn'])
         if (!isLoggedIn) {
           replace({ pathname: '/enter', state: nextState })
         } else {
@@ -62,10 +64,12 @@ const routes = (store, isServer = false) => {
   const indexRoute = {
     getComponents: getDiscoverComponents,
     onEnter(nextState, replace, callback) {
-      const {
-        authentication: { isLoggedIn },
-        gui: { homeStream },
-      } = store.getState()
+      // const {
+      //   authentication: { isLoggedIn },
+      //   gui: { homeStream },
+      // } = store.getState()
+      const isLoggedIn = store.getState().getIn(['authentication', 'isLoggedIn'])
+      const homeStream = store.getState().getIn(['gui', 'homeStream'])
 
       const fetchPromoAction = isLoggedIn ? fetchLoggedInPromos() : fetchLoggedOutPromos()
       set(fetchPromoAction, 'meta.successAction', callback)
@@ -100,7 +104,8 @@ const routes = (store, isServer = false) => {
         UserDetailRoute,
       ],
       onEnter() {
-        const { authentication: { isLoggedIn } } = store.getState()
+        console.log('state', store.getState())
+        const isLoggedIn = store.getState().getIn(['authentication', 'isLoggedIn'])
         if (!isLoggedIn && !isServer) {
           store.dispatch(refreshAuthenticationToken())
         }

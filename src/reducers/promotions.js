@@ -11,13 +11,13 @@ const initialState = Immutable.Map({
 export default (state = initialState, action) => {
   switch (action.type) {
     case PROMOTIONS.AUTHENTICATION_SUCCESS:
-      return initialState.set('authentication', action.payload.response).toJS()
+      return state.set('authentication', action.payload.response)
     case PROMOTIONS.LOGGED_IN_SUCCESS:
-      return initialState.set('loggedIn', action.payload.response).toJS()
+      return state.set('loggedIn', action.payload.response)
     case PROMOTIONS.LOGGED_OUT_SUCCESS:
-      return initialState.set('loggedOut', action.payload.response).toJS()
+      return state.set('loggedOut', action.payload.response)
     default:
-      return initialState.toJS()
+      return state
   }
 }
 

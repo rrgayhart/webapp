@@ -36,10 +36,8 @@ methods.getCompletions = (action) => {
 // TODO: make sure this still works
 methods.rehydrateEditors = (persistedEditors = {}) => {
   const editors = {}
-  console.log('persistedEditors', persistedEditors)
   Object.keys(persistedEditors).forEach((item) => {
     const pe = persistedEditors[item]
-    console.log('item', item, pe)
     if (pe && pe.shouldPersist) {
       // clear out the blobs
       Object.keys(pe.collection).forEach((uid) => {
@@ -205,8 +203,8 @@ methods.updateBuyLink = (state, action) => {
 }
 
 methods.getEditorObject = (state = initialState, action) => {
+  console.log('state', typeof state)
   let updatedState = null
-  console.log('state', state, initialState)
   switch (action.type) {
     case EDITOR.ADD_BLOCK:
       return methods.add({

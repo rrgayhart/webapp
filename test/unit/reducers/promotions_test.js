@@ -24,8 +24,8 @@ describe('promotions reducer', () => {
         type: PROMOTIONS.AUTHENTICATION_SUCCESS,
         payload: { response: authentication },
       }
-      const result = reducer(reducer, action)
-      expect(result.authentication).to.deep.equal(authentication)
+      const result = reducer(undefined, action)
+      expect(result.get('authentication')).to.equal(authentication)
     })
 
     it('PROMOTIONS.LOGGED_IN_SUCCESS sets the list of logged in promotions', () => {
@@ -33,8 +33,8 @@ describe('promotions reducer', () => {
         type: PROMOTIONS.LOGGED_IN_SUCCESS,
         payload: { response: loggedIn },
       }
-      const result = reducer(reducer, action)
-      expect(result.loggedIn).to.deep.equal(loggedIn)
+      const result = reducer(undefined, action)
+      expect(result.get('loggedIn')).to.equal(loggedIn)
     })
 
     it('PROMOTIONS.LOGGED_OUT_SUCCESS sets the list of logged out promotions', () => {
@@ -42,8 +42,8 @@ describe('promotions reducer', () => {
         type: PROMOTIONS.LOGGED_OUT_SUCCESS,
         payload: { response: loggedOut },
       }
-      const result = reducer(reducer, action)
-      expect(result.loggedOut).to.deep.equal(loggedOut)
+      const result = reducer(undefined, action)
+      expect(result.get('loggedOut')).to.equal(loggedOut)
     })
   })
 })
