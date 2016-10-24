@@ -15,7 +15,7 @@ import UserContainer from '../../containers/UserContainer'
 export const HeroBackgroundCycle = () =>
   <div className="HeroBackgroundCycle fullscreen" />
 
-// -----------------
+// -------------------------------------
 
 export const HeroBroadcast = ({ broadcast, onDismiss }) =>
   <ZeroStream onDismiss={onDismiss}>{broadcast}</ZeroStream>
@@ -25,7 +25,7 @@ HeroBroadcast.propTypes = {
   onDismiss: PropTypes.func,
 }
 
-// -----------------
+// -------------------------------------
 
 export const HeroProfile = ({ dpi, sources, userId, useGif }) =>
   <div className="HeroProfile">
@@ -47,35 +47,7 @@ HeroProfile.propTypes = {
   useGif: PropTypes.bool,
 }
 
-// -----------------
-
-export const HeroPromotion = (props) => {
-  const { caption, creditSources, creditUsername, dpi, sources } = props
-  const { ctaCaption, ctaHref, isLoggedIn } = props
-  return (
-    <div className="HeroPromotion">
-      <BackgroundImage className="hasOverlay3" dpi={dpi} sources={sources} />
-      <div className="HeroPromotionCaption">
-        <h1 className="HeroPromotionHeading">{caption}</h1>
-        <HeroPromotionCTA caption={ctaCaption} isLoggedIn={isLoggedIn} to={ctaHref} />
-      </div>
-      <HeroPromotionCredits sources={creditSources} username={creditUsername} />
-    </div>
-  )
-}
-
-HeroPromotion.propTypes = {
-  caption: PropTypes.string,
-  creditSources: PropTypes.object,
-  creditUsername: PropTypes.string,
-  ctaCaption: PropTypes.string,
-  ctaHref: PropTypes.string,
-  dpi: PropTypes.string.isRequired,
-  isLoggedIn: PropTypes.bool.isRequired,
-  sources: PropTypes.object,
-}
-
-// -----------------
+// -------------------------------------
 
 export const HeroPromotionAuth = (props) => {
   const { creditSources, creditUsername, dpi, sources } = props
@@ -92,6 +64,66 @@ HeroPromotionAuth.propTypes = {
   creditSources: PropTypes.object,
   creditUsername: PropTypes.string,
   dpi: PropTypes.string.isRequired,
+  sources: PropTypes.object,
+}
+
+// -------------------------------------
+
+export const HeroPromotionCategory = (props) => {
+  const { copy, creditSources, creditUsername, dpi, heading, sources, subheading } = props
+  const { ctaCaption, ctaHref, isLoggedIn } = props
+  return (
+    <div className="HeroPromotion HeroPromotionCategory">
+      <BackgroundImage className="hasOverlay3" dpi={dpi} sources={sources} />
+      <div className="HeroPromotionCaption isCentered">
+        <h1 className="HeroPromotionCategoryHeading"><span>{heading}</span></h1>
+        {subheading ? <h2 className="HeroPromotionCategorySubheading"><span>{subheading}</span></h2> : null}
+        <p className="HeroPromotionCategoryCopy">{copy}</p>
+        <HeroPromotionCTA caption={ctaCaption} isLoggedIn={isLoggedIn} to={ctaHref} />
+      </div>
+      <HeroPromotionCredits sources={creditSources} username={creditUsername} />
+    </div>
+  )
+}
+
+HeroPromotionCategory.propTypes = {
+  copy: PropTypes.string.isRequired,
+  creditSources: PropTypes.object,
+  creditUsername: PropTypes.string,
+  ctaCaption: PropTypes.string,
+  ctaHref: PropTypes.string,
+  dpi: PropTypes.string.isRequired,
+  isLoggedIn: PropTypes.bool.isRequired,
+  heading: PropTypes.string.isRequired,
+  sources: PropTypes.object,
+  subheading: PropTypes.string,
+}
+
+// -------------------------------------
+
+export const HeroPromotionSampled = (props) => {
+  const { caption, creditSources, creditUsername, dpi, sources } = props
+  const { ctaCaption, ctaHref, isLoggedIn } = props
+  return (
+    <div className="HeroPromotion HeroPromotionSampled">
+      <BackgroundImage className="hasOverlay3" dpi={dpi} sources={sources} />
+      <div className="HeroPromotionCaption">
+        <h1 className="HeroPromotionHeading">{caption}</h1>
+        <HeroPromotionCTA caption={ctaCaption} isLoggedIn={isLoggedIn} to={ctaHref} />
+      </div>
+      <HeroPromotionCredits sources={creditSources} username={creditUsername} />
+    </div>
+  )
+}
+
+HeroPromotionSampled.propTypes = {
+  caption: PropTypes.string,
+  creditSources: PropTypes.object,
+  creditUsername: PropTypes.string,
+  ctaCaption: PropTypes.string,
+  ctaHref: PropTypes.string,
+  dpi: PropTypes.string.isRequired,
+  isLoggedIn: PropTypes.bool.isRequired,
   sources: PropTypes.object,
 }
 

@@ -24,21 +24,38 @@ import {
 } from '../actions/gui'
 import { openModal } from '../actions/modals'
 import ShareDialog from '../components/dialogs/ShareDialog'
-import { HeroBackgroundCycle, HeroBroadcast, HeroProfile, HeroPromotion, HeroPromotionAuth } from '../components/heros/HeroRenderables'
+import {
+  HeroBackgroundCycle,
+  HeroBroadcast,
+  HeroProfile,
+  HeroPromotionAuth,
+  HeroPromotionCategory,
+  HeroPromotionSampled,
+} from '../components/heros/HeroRenderables'
 
-export const selectIsAuthenticationLayout = createSelector(
+export const selectIsAuthentication = createSelector(
   [selectViewNameFromRoute], viewName => viewName === 'authentication'
 )
 
-export const selectIsBackgroundCycleLayout = createSelector(
+export const selectIsBackgroundCycle = createSelector(
   [selectViewNameFromRoute], viewName => viewName === 'join'
 )
 
-export const selectIsPromotionLayout = createSelector(
-  [selectViewNameFromRoute], viewName => viewName === 'discover' || viewName === 'search'
+export const selectIsSampledPromotion = createSelector(
+  [selectViewNameFromRoute, selectPathname], (viewName, pathname) =>
+    (viewName === 'search') ||
+    (viewName === 'discover' && pathname === '/') ||
+    (viewName === 'discover' && pathname === '/discover') ||
+    (viewName === 'discover' && pathname === '/discover/all') ||
+    (viewName === 'discover' && /\/featured\b|\/trending\b|\/recent\b/.test(pathname))
 )
 
-export const selectIsUserProfileLayout = createSelector(
+export const selectIsCategoryPromotion = createSelector(
+  [selectViewNameFromRoute, selectIsSampledPromotion], (viewName, isSampledPromotion) =>
+    (viewName === 'discover' && !isSampledPromotion)
+)
+
+export const selectIsUserProfile = createSelector(
   [selectViewNameFromRoute], viewName => viewName === 'userDetail'
 )
 
@@ -62,11 +79,12 @@ function mapStateToProps(state, props) {
   return {
     broadcast: selectBroadcast(state),
     dpi: selectCoverDPI(state),
-    isAuthenticationLayout: selectIsAuthenticationLayout(state),
-    isBackgroundCycleLayout: selectIsBackgroundCycleLayout(state),
+    isAuthentication: selectIsAuthentication(state),
+    isCategoryPromotion: selectIsCategoryPromotion(state),
+    isBackgroundCycle: selectIsBackgroundCycle(state),
     isLoggedIn: selectIsLoggedIn(state),
-    isPromotionLayout: selectIsPromotionLayout(state),
-    isUserProfileLayout: selectIsUserProfileLayout(state, props),
+    isSampledPromotion: selectIsSampledPromotion(state),
+    isUserProfile: selectIsUserProfile(state, props),
     pathname: selectPathname(state),
     promotions: selectCurrentPromotions(state),
     useGif: user && (user.viewsAdultContent || !user.postsAdultContent),
@@ -82,11 +100,12 @@ class HeroContainer extends Component {
     broadcast: PropTypes.string,
     dispatch: PropTypes.func.isRequired,
     dpi: PropTypes.string.isRequired,
-    isAuthenticationLayout: PropTypes.bool,
-    isBackgroundCycleLayout: PropTypes.bool,
+    isAuthentication: PropTypes.bool,
+    isCategoryPromotion: PropTypes.bool,
+    isBackgroundCycle: PropTypes.bool,
     isLoggedIn: PropTypes.bool.isRequired,
-    isPromotionLayout: PropTypes.bool,
-    isUserProfileLayout: PropTypes.bool,
+    isSampledPromotion: PropTypes.bool,
+    isUserProfile: PropTypes.bool,
     pathname: PropTypes.string.isRequired,
     useGif: PropTypes.bool,
     userCoverImage: PropTypes.object,
@@ -112,10 +131,13 @@ class HeroContainer extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { broadcast, isPromotionLayout, pathname } = nextProps
+    const { broadcast, isCategoryPromotion, isSampledPromotion, pathname } = nextProps
     const hasPathChanged = this.props.pathname !== pathname
 
-    if ((hasPathChanged && isPromotionLayout) || !this.state.promotion) {
+    if ((hasPathChanged && isSampledPromotion) || !this.state.promotion) {
+      this.setState({ promotion: sample(nextProps.promotions) })
+    } else if ((hasPathChanged && isCategoryPromotion) || !this.state.promotion) {
+      // TODO epic/promos-2.0 Should be handed the promotion from the category API
       this.setState({ promotion: sample(nextProps.promotions) })
     }
 
@@ -136,8 +158,9 @@ class HeroContainer extends Component {
   }
 
   onClickTrackCredits = () => {
-    const { dispatch, isPromotionLayout } = this.props
-    const label = `${isPromotionLayout ? 'banderole' : 'authentication'}-credits-clicked`
+    const { dispatch, isCategoryPromotion, isSampledPromotion } = this.props
+    // TODO epic/promos-2.0 This is going to change, waiting for feedback in the google doc
+    const label = `${isSampledPromotion || isCategoryPromotion ? 'banderole' : 'authentication'}-credits-clicked`
     dispatch(trackEvent(label))
   }
 
@@ -161,20 +184,6 @@ class HeroContainer extends Component {
     return <HeroProfile key="HeroProfile" {...props} />
   }
 
-  getHeroPromotion() {
-    const { dpi, isLoggedIn } = this.props
-    const { promotion } = this.state
-    const caption = get(promotion, 'caption', '')
-    const creditSources = get(promotion, 'avatar', null)
-    const creditUsername = get(promotion, 'username', null)
-    const ctaCaption = get(promotion, 'cta.caption')
-    const ctaHref = get(promotion, 'cta.href')
-    const sources = get(promotion, 'coverImage', null)
-    const props = { caption, creditSources, creditUsername, dpi, sources }
-    const ctaProps = { ctaCaption, ctaHref, isLoggedIn }
-    return <HeroPromotion key="HeroPromotion" {...props} {...ctaProps} />
-  }
-
   getHeroPromotionAuth() {
     const { dpi } = this.props
     const { promotion } = this.state
@@ -185,11 +194,43 @@ class HeroContainer extends Component {
     return <HeroPromotionAuth key="HeroPromotionAuth" {...props} />
   }
 
+  // TODO epic/promos-2.0 Grab the real props
+  getHeroPromotionCategory() {
+    const { dpi, isLoggedIn } = this.props
+    const { promotion } = this.state
+    const heading = 'Architecture' || get(promotion, 'heading', '') // TODO epic/promos-2.0 get from API
+    const subheading = 'Subheading' || get(promotion, 'subheading', '') // TODO epic/promos-2.0 get from API
+    const txt = 'Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. ' // eslint-disable-line
+    const copy = txt + txt || get(promotion, 'description', '') // TODO epic/promos-2.0 get from API
+    const creditSources = get(promotion, 'avatar', null)
+    const creditUsername = get(promotion, 'username', null)
+    const ctaCaption = get(promotion, 'cta.caption')
+    const ctaHref = get(promotion, 'cta.href')
+    const sources = get(promotion, 'coverImage', null)
+    const props = { copy, creditSources, creditUsername, dpi, heading, sources, subheading }
+    const ctaProps = { ctaCaption, ctaHref, isLoggedIn }
+    return <HeroPromotionCategory key="HeroPromotionCategory" {...props} {...ctaProps} />
+  }
+
+  getHeroPromotionSampled() {
+    const { dpi, isLoggedIn } = this.props
+    const { promotion } = this.state
+    const caption = get(promotion, 'caption', '')
+    const creditSources = get(promotion, 'avatar', null)
+    const creditUsername = get(promotion, 'username', null)
+    const ctaCaption = get(promotion, 'cta.caption')
+    const ctaHref = get(promotion, 'cta.href')
+    const sources = get(promotion, 'coverImage', null)
+    const props = { caption, creditSources, creditUsername, dpi, sources }
+    const ctaProps = { ctaCaption, ctaHref, isLoggedIn }
+    return <HeroPromotionSampled key="HeroPromotionSampled" {...props} {...ctaProps} />
+  }
+
   render() {
     const children = []
     const { broadcast } = this.state
-    const { isAuthenticationLayout, isBackgroundCycleLayout } = this.props
-    const { isPromotionLayout, isUserProfileLayout, userId } = this.props
+    const { isAuthentication, isBackgroundCycle } = this.props
+    const { isCategoryPromotion, isSampledPromotion, isUserProfile, userId } = this.props
 
     if (broadcast) {
       const props = { broadcast, onDismiss: this.onDismissBroadcast }
@@ -197,13 +238,15 @@ class HeroContainer extends Component {
     }
 
     // Pick a background
-    if (isPromotionLayout) {
-      children.push(this.getHeroPromotion())
-    } else if (isUserProfileLayout && userId) {
+    if (isCategoryPromotion) {
+      children.push(this.getHeroPromotionCategory())
+    } else if (isSampledPromotion) {
+      children.push(this.getHeroPromotionSampled())
+    } else if (isUserProfile && userId) {
       children.push(this.getHeroProfile())
-    } else if (isAuthenticationLayout) {
+    } else if (isAuthentication) {
       children.push(this.getHeroPromotionAuth())
-    } else if (isBackgroundCycleLayout) {
+    } else if (isBackgroundCycle) {
       children.push(<HeroBackgroundCycle key="HeroBackgroundCycle" />)
     }
     return (

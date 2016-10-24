@@ -89,6 +89,27 @@ Hero Promotion */
   transform: translateY(-50%);
 }
 
+.HeroPromotionCaption.isCentered {
+  left: auto !important;
+  max-width: 500px;
+  margin: 0 10px;
+}
+
+.HeroPromotionCategoryHeading {
+  font-size: 18px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.HeroPromotionCategorySubheading {
+  font-size: 16px;
+}
+
+.HeroPromotionCategoryHeading span {
+  display: inline-block;
+  border-bottom: 1px solid;
+}
+
 .HeroPromotionHeading {
   font-size: 18px;
 }
@@ -132,8 +153,20 @@ Hero Promotion */
     left: 20px;
   }
 
+  .HeroPromotionCaption.isCentered {
+    margin: 0 20px;
+  }
+
   .HeroPromotionHeading {
     font-size: 48px;
+  }
+
+  .HeroPromotionCategoryHeading {
+    font-size: 24px;
+  }
+
+  .HeroPromotionCategorySubheading {
+    font-size: 18px;
   }
 
   .HeroPromotionCredits {
@@ -145,6 +178,10 @@ Hero Promotion */
 @media (--break-4) {
   .HeroPromotionCaption {
     left: 40px;
+  }
+
+  .HeroPromotionCaption.isCentered {
+    margin: 0 auto;
   }
 
   .HeroPromotionCredits {

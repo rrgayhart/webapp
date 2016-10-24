@@ -13,7 +13,7 @@ export const HeroAppStores = () =>
     <GooglePlayStore />
   </div>
 
-// -----------------
+// -------------------------------------
 
 export const HeroPromotionCredits = ({ sources, username }, { onClickTrackCredits }) =>
   <Link className="HeroPromotionCredits" onClick={onClickTrackCredits} to={`/${username}`}>
@@ -31,7 +31,7 @@ HeroPromotionCredits.propTypes = {
   username: PropTypes.string,
 }
 
-// -----------------
+// -------------------------------------
 
 export const HeroPromotionCTA = ({ caption, isLoggedIn, to }) => {
   if (caption && to) {
@@ -48,7 +48,7 @@ HeroPromotionCTA.propTypes = {
   to: PropTypes.string,
 }
 
-// -----------------
+// -------------------------------------
 
 export const HeroScrollToContentButton = (props, { onClickScrollToContent }) =>
   <button className="HeroScrollToContentButton" onClick={onClickScrollToContent}>
@@ -64,7 +64,7 @@ HeroScrollToContentButton.contextTypes = {
   onClickScrollToContent: PropTypes.func.isRequired,
 }
 
-// -----------------
+// -------------------------------------
 
 export const HeroShareUserButton = (props, { onClickShareProfile }) =>
   <button className="HeroShareUserButton" onClick={onClickShareProfile} >
