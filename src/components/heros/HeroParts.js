@@ -15,9 +15,9 @@ export const HeroAppStores = () =>
 
 // -------------------------------------
 
-export const HeroPromotionCredits = ({ sources, username }, { onClickTrackCredits }) =>
+export const HeroPromotionCredits = ({ label, sources, username }, { onClickTrackCredits }) =>
   <Link className="HeroPromotionCredits" onClick={onClickTrackCredits} to={`/${username}`}>
-    <span className="HeroPromotionCreditsBy">Posted by</span>
+    <span className="HeroPromotionCreditsBy">{label}</span>
     <span className="HeroPromotionCreditsAuthor">@{username}</span>
     <Avatar className="inHeroPromotionCredits" sources={sources} username={username} />
   </Link>
@@ -27,6 +27,7 @@ HeroPromotionCredits.contextTypes = {
 }
 
 HeroPromotionCredits.propTypes = {
+  label: PropTypes.string,
   sources: PropTypes.object,
   username: PropTypes.string,
 }

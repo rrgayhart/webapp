@@ -1,9 +1,5 @@
 import { PROMOTIONS } from '../constants/action_types'
-import {
-  authenticationPromo,
-  loggedInPromo,
-  loggedOutPromo,
-} from '../networking/api'
+import { authenticationPromo } from '../networking/api'
 
 export const fetchAuthenticationPromos = () => ({
   type: PROMOTIONS.AUTHENTICATION,
@@ -12,16 +8,5 @@ export const fetchAuthenticationPromos = () => ({
   },
 })
 
-export const fetchLoggedInPromos = () => ({
-  type: PROMOTIONS.LOGGED_IN,
-  payload: {
-    endpoint: loggedInPromo(),
-  },
-})
+export default fetchAuthenticationPromos
 
-export const fetchLoggedOutPromos = () => ({
-  type: PROMOTIONS.LOGGED_OUT,
-  payload: {
-    endpoint: loggedOutPromo(),
-  },
-})

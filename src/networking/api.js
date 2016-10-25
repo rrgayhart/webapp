@@ -71,14 +71,6 @@ export function authenticationPromo() {
   }
 }
 
-export function loggedInPromo() {
-  return { path: `${ENV.PROMO_HOST}/loggedIn.json` }
-}
-
-export function loggedOutPromo() {
-  return { path: `${ENV.PROMO_HOST}/loggedOut.json` }
-}
-
 // Current User Profile
 export function profilePath() {
   return {

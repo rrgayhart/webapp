@@ -70,33 +70,32 @@ HeroPromotionAuth.propTypes = {
 // -------------------------------------
 
 export const HeroPromotionCategory = (props) => {
-  const { copy, creditSources, creditUsername, dpi, heading, sources, subheading } = props
+  const { creditLabel, creditSources, creditUsername, description, dpi, name, sources } = props
   const { ctaCaption, ctaHref, isLoggedIn } = props
   return (
     <div className="HeroPromotion HeroPromotionCategory">
       <BackgroundImage className="hasOverlay3" dpi={dpi} sources={sources} />
       <div className="HeroPromotionCaption isCentered">
-        <h1 className="HeroPromotionCategoryHeading"><span>{heading}</span></h1>
-        {subheading ? <h2 className="HeroPromotionCategorySubheading"><span>{subheading}</span></h2> : null}
-        <p className="HeroPromotionCategoryCopy">{copy}</p>
+        <h1 className="HeroPromotionCategoryHeading"><span>{name}</span></h1>
+        <p className="HeroPromotionCategoryCopy">{description}</p>
         <HeroPromotionCTA caption={ctaCaption} isLoggedIn={isLoggedIn} to={ctaHref} />
       </div>
-      <HeroPromotionCredits sources={creditSources} username={creditUsername} />
+      <HeroPromotionCredits label={creditLabel} sources={creditSources} username={creditUsername} />
     </div>
   )
 }
 
 HeroPromotionCategory.propTypes = {
-  copy: PropTypes.string.isRequired,
+  creditLabel: PropTypes.string,
   creditSources: PropTypes.object,
   creditUsername: PropTypes.string,
   ctaCaption: PropTypes.string,
   ctaHref: PropTypes.string,
+  description: PropTypes.string.isRequired,
   dpi: PropTypes.string.isRequired,
   isLoggedIn: PropTypes.bool.isRequired,
-  heading: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
   sources: PropTypes.object,
-  subheading: PropTypes.string,
 }
 
 // -------------------------------------
