@@ -3,8 +3,6 @@ import {
   selectBroadcast,
   selectIsAuthentication,
   selectIsBackgroundCycle,
-  selectIsCategoryPromotion,
-  selectIsSampledPromotion,
   selectIsUserProfile,
 } from '../../../src/containers/HeroContainer'
 
@@ -69,92 +67,7 @@ describe('HeroContainer', () => {
     })
   })
 
-  context('#selectIsSampledPromotion', () => {
-    it('selects with memoization whether the current route has a promotion', () => {
-      let state = { routing: { location: { pathname: '/search', change: false } } }
-      expect(selectIsSampledPromotion(state)).to.equal(true)
-
-      state = { routing: { location: { pathname: '/search', change: true } } }
-      expect(selectIsSampledPromotion(state)).to.equal(true)
-      expect(selectIsSampledPromotion.recomputations()).to.equal(1)
-
-      state = { routing: { location: { pathname: '/discover', change: true } } }
-      expect(selectIsSampledPromotion(state)).to.equal(true)
-      expect(selectIsSampledPromotion.recomputations()).to.equal(2)
-
-      const hasPromos = [
-        '/',
-        '/discover/all',
-        '/discover/featured',
-        '/discover/trending',
-        '/discover/recent',
-      ]
-
-      hasPromos.forEach((route) => {
-        state = { routing: { location: { pathname: route, change: false } } }
-        expect(selectIsSampledPromotion(state)).to.equal(true, `${route} should have a Sampled Promotion.`)
-      })
-
-      const noPromos = [
-        '/discover/art',
-        '/discover/photography',
-        '/following',
-        '/settings',
-        '/invitations',
-        '/notifications',
-        '/mk/post/etlb9br06dh6tleztw4g',
-        '/mk',
-        '/mk/loves',
-      ]
-      noPromos.forEach((route) => {
-        state = { routing: { location: { pathname: route, change: false } } }
-        expect(selectIsSampledPromotion(state)).to.equal(false, `${route} should not have a Sampled Promotion.`)
-      })
-      expect(selectIsSampledPromotion.recomputations()).to.equal(16)
-    })
-  })
-
-  context('#selectIsCategoryPromotion', () => {
-    it('selects with memoization whether the current route has a promotion', () => {
-      let state = { routing: { location: { pathname: '/discover/art', change: false } } }
-      expect(selectIsCategoryPromotion(state)).to.equal(true)
-
-      state = { routing: { location: { pathname: '/discover/photography', change: true } } }
-      expect(selectIsCategoryPromotion(state)).to.equal(true)
-      expect(selectIsCategoryPromotion.recomputations()).to.equal(1)
-
-      const hasPromos = [
-        '/discover/design',
-        '/discover/skate',
-        '/discover/stuff',
-      ]
-
-      hasPromos.forEach((route) => {
-        state = { routing: { location: { pathname: route, change: false } } }
-        expect(selectIsCategoryPromotion(state)).to.equal(true, `${route} should have a Category Promotion.`)
-      })
-
-      const noPromos = [
-        '/',
-        '/discover/all',
-        '/discover/featured',
-        '/discover/trending',
-        '/discover/recent',
-        '/following',
-        '/settings',
-        '/invitations',
-        '/notifications',
-        '/mk/post/etlb9br06dh6tleztw4g',
-        '/mk',
-        '/mk/loves',
-      ]
-      noPromos.forEach((route) => {
-        state = { routing: { location: { pathname: route, change: false } } }
-        expect(selectIsCategoryPromotion(state)).to.equal(false, `${route} should not have a Category Promotion.`)
-      })
-      expect(selectIsCategoryPromotion.recomputations()).to.equal(8)
-    })
-  })
+  context('#selectCategoryData', () => { })
 
   context('#selectIsUserProfile', () => {
     it('selects with memoization whether the current route has a cover', () => {
