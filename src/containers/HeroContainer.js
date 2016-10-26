@@ -26,7 +26,7 @@ import {
 import { openModal } from '../actions/modals'
 import ShareDialog from '../components/dialogs/ShareDialog'
 import {
-  // HeroBackgroundCycle,
+  HeroBackgroundCycle,
   HeroBroadcast,
   HeroProfile,
   HeroPromotionAuth,
@@ -75,7 +75,7 @@ function mapStateToProps(state, props) {
     isUserProfile: selectIsUserProfile(state, props),
     json: selectJson(state),
     pathname: selectPathname(state),
-    promotions: [],
+    promotions: state.promotions.authentication || [],
     useGif: user && (user.viewsAdultContent || !user.postsAdultContent),
     userCoverImage: user && user.coverImage,
     userId: user && `${user.id}`,
@@ -90,11 +90,11 @@ class HeroContainer extends Component {
     categoryData: PropTypes.object,
     dispatch: PropTypes.func.isRequired,
     dpi: PropTypes.string.isRequired,
-    // isAuthentication: PropTypes.bool,
-    // isBackgroundCycle: PropTypes.bool,
+    isAuthentication: PropTypes.bool,
+    isBackgroundCycle: PropTypes.bool,
     isLoggedIn: PropTypes.bool.isRequired,
     isSampledPromotion: PropTypes.bool,
-    // isUserProfile: PropTypes.bool,
+    isUserProfile: PropTypes.bool,
     json: PropTypes.object,
     pathname: PropTypes.string.isRequired,
     useGif: PropTypes.bool,
@@ -121,12 +121,12 @@ class HeroContainer extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { broadcast, categoryData, isSampledPromotion, pathname } = nextProps
+    const { broadcast, isSampledPromotion, pathname } = nextProps
     const hasPathChanged = this.props.pathname !== pathname
 
     if ((hasPathChanged && isSampledPromotion) || !this.state.promotion) {
       this.setState({ promotion: sample(nextProps.promotions) })
-    } else if ((hasPathChanged && categoryData) || !this.state.promotion) {
+    } else if (hasPathChanged || !this.state.promotion) {
       // TODO epic/promos-2.0 Should be handed the promotion from the category API
       this.setState({ promotion: sample(nextProps.promotions) })
     }
@@ -227,9 +227,7 @@ class HeroContainer extends Component {
   render() {
     const children = []
     const { broadcast } = this.state
-    // const { isAuthentication, isBackgroundCycle } = this.props
-    const { categoryData } = this.props
-    // const { categoryData, isSampledPromotion, isUserProfile, userId } = this.props
+    const { categoryData, isAuthentication, isBackgroundCycle, isUserProfile, userId } = this.props
 
     if (broadcast) {
       const props = { broadcast, onDismiss: this.onDismissBroadcast }
@@ -239,16 +237,16 @@ class HeroContainer extends Component {
     // Pick a background
     if (categoryData) {
       children.push(this.getHeroPromotionCategory())
-    }
+    // }
     // else if (isSampledPromotion) {
     //   children.push(this.getHeroPromotionSampled())
-    // } else if (isUserProfile && userId) {
-    //   children.push(this.getHeroProfile())
-    // } else if (isAuthentication) {
-    //   children.push(this.getHeroPromotionAuth())
-    // } else if (isBackgroundCycle) {
-    //   children.push(<HeroBackgroundCycle key="HeroBackgroundCycle" />)
-    // }
+    } else if (isUserProfile && userId) {
+      children.push(this.getHeroProfile())
+    } else if (isAuthentication) {
+      children.push(this.getHeroPromotionAuth())
+    } else if (isBackgroundCycle) {
+      children.push(<HeroBackgroundCycle key="HeroBackgroundCycle" />)
+    }
     return (
       <div className="Hero">
         {children}
