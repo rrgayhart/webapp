@@ -1,10 +1,5 @@
-import set from 'lodash/set'
 import AppContainer from '../containers/AppContainer'
 import { refreshAuthenticationToken } from '../actions/authentication'
-import {
-  fetchLoggedInPromos,
-  fetchLoggedOutPromos,
-} from '../actions/promotions'
 import PostDetailRoute from './post_detail'
 import WTFRoute from './wtf'
 import authenticationRoutes from './authentication'
@@ -61,16 +56,11 @@ const routes = (store, isServer = false) => {
 
   const indexRoute = {
     getComponents: getDiscoverComponents,
-    onEnter(nextState, replace, callback) {
+    onEnter(nextState, replace) {
       const {
         authentication: { isLoggedIn },
         gui: { currentStream },
       } = store.getState()
-
-      const fetchPromoAction = isLoggedIn ? fetchLoggedInPromos() : fetchLoggedOutPromos()
-      set(fetchPromoAction, 'meta.successAction', callback)
-      set(fetchPromoAction, 'meta.failureAction', callback)
-      store.dispatch(fetchPromoAction)
 
       if (isLoggedIn) {
         replace({ pathname: currentStream, state: nextState })
