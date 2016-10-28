@@ -134,6 +134,11 @@ export function categoryPosts(type) {
     path: getAPIPath(`categories${typePath}/posts/recent`, { per_page: PER_PAGE }),
   }
 }
+export function pagePromotionals() {
+  return {
+    path: getAPIPath('page_promotionals'),
+  }
+}
 // Discover
 export function discoverUsers(type) {
   const params = {

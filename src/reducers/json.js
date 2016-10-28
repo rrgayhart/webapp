@@ -137,7 +137,7 @@ methods.addModels = (state, type, data) => {
   const camelType = camelize(type)
   if (!state[camelType]) { state[camelType] = {} }
   const ids = []
-  if (camelType === MAPPING_TYPES.CATEGORIES) {
+  if (camelType === MAPPING_TYPES.CATEGORIES || camelType === MAPPING_TYPES.PAGE_PROMOTIONALS) {
     const newType = { ...state[camelType] }
     data[camelType].forEach((item) => {
       const id = `${item.id}`

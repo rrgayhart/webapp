@@ -19,6 +19,16 @@ export function getCategories() {
   }
 }
 
+export function getPagePromotionals() {
+  return {
+    type: ACTION_TYPES.LOAD_STREAM,
+    payload: { endpoint: api.pagePromotionals() },
+    meta: {
+      mappingType: MAPPING_TYPES.PAGE_PROMOTIONALS,
+    },
+  }
+}
+
 export function loadCategoryPosts(type) {
   return {
     type: ACTION_TYPES.LOAD_STREAM,

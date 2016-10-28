@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import shallowCompare from 'react-addons-shallow-compare'
 import classNames from 'classnames'
 import { selectIsLoggedIn } from '../selectors/authentication'
-import { getCategories } from '../actions/discover'
+import { getCategories, getPagePromotionals } from '../actions/discover'
 import { loadNotifications } from '../actions/notifications'
 import { loadProfile } from '../actions/profile'
 import { fetchAuthenticationPromos } from '../actions/promotions'
@@ -43,9 +43,13 @@ class AppContainer extends Component {
       return Promise.all([
         store.dispatch(loadProfile()),
         store.dispatch(getCategories()),
+        store.dispatch(getPagePromotionals()),
       ])
     }
-    return store.dispatch(getCategories())
+    return Promise.all([
+      store.dispatch(getCategories()),
+      store.dispatch(getPagePromotionals()),
+    ])
   }
 
   static childContextTypes = {
@@ -69,6 +73,7 @@ class AppContainer extends Component {
       dispatch(fetchAuthenticationPromos())
     }
     dispatch(getCategories())
+    dispatch(getPagePromotionals())
   }
 
   componentWillReceiveProps(nextProps) {

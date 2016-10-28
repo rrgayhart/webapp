@@ -1,13 +1,12 @@
 import { createSelector } from 'reselect'
 import get from 'lodash/get'
-import { selectPathname } from './routing'
+import { selectPathname, selectViewNameFromRoute } from './routing'
 import { getLinkArray } from '../helpers/json_helper'
 
 const selectJson = state => get(state, 'json')
 const selectCats = state => get(state, 'json.categories', {})
-
-// state.promotions.xxx
-export const selectPromotionsAuthentication = state => get(state, 'promotions.authentication')
+export const selectAuthPromotionals = state => get(state, 'promotions.authentication')
+export const selectPagePromotionals = state => get(state, 'json.pagePromotionals', {})
 
 export const selectCategoryData = createSelector(
   [selectPathname, selectJson, selectCats], (pathname, json, categories) => {
@@ -26,6 +25,12 @@ export const selectCategoryData = createSelector(
   }
 )
 
-export const selectPagePromotions = createSelector(
+export const selectIsPagePromotion = createSelector(
+  [selectViewNameFromRoute, selectPathname], (viewName, pathname) =>
+    (viewName === 'search') ||
+    (viewName === 'discover' && pathname === '/') ||
+    (viewName === 'discover' && pathname === '/discover') ||
+    (viewName === 'discover' && pathname === '/discover/all') ||
+    (viewName === 'discover' && /\/featured\b|\/trending\b|\/recent\b/.test(pathname))
 )
 

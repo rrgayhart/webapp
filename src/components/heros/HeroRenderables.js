@@ -100,14 +100,15 @@ HeroPromotionCategory.propTypes = {
 
 // -------------------------------------
 
-export const HeroPromotionSampled = (props) => {
-  const { caption, creditSources, creditUsername, dpi, sources } = props
+export const HeroPromotionPage = (props) => {
+  const { creditSources, creditUsername, dpi, header, sources, subheader } = props
   const { ctaCaption, ctaHref, isLoggedIn } = props
   return (
-    <div className="HeroPromotion HeroPromotionSampled">
+    <div className="HeroPromotion HeroPromotionPage">
       <BackgroundImage className="hasOverlay3" dpi={dpi} sources={sources} />
       <div className="HeroPromotionCaption">
-        <h1 className="HeroPromotionHeading">{caption}</h1>
+        <h1 className="HeroPromotionHeading">{header}</h1>
+        <h2 className="HeroPromotionSubheading">{subheader}</h2>
         <HeroPromotionCTA caption={ctaCaption} isLoggedIn={isLoggedIn} to={ctaHref} />
       </div>
       <HeroPromotionCredits sources={creditSources} username={creditUsername} />
@@ -115,14 +116,15 @@ export const HeroPromotionSampled = (props) => {
   )
 }
 
-HeroPromotionSampled.propTypes = {
-  caption: PropTypes.string,
+HeroPromotionPage.propTypes = {
   creditSources: PropTypes.object,
   creditUsername: PropTypes.string,
   ctaCaption: PropTypes.string,
   ctaHref: PropTypes.string,
   dpi: PropTypes.string.isRequired,
+  header: PropTypes.string,
   isLoggedIn: PropTypes.bool.isRequired,
   sources: PropTypes.object,
+  subheader: PropTypes.string,
 }
 

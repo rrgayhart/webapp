@@ -14,7 +14,12 @@ import {
   selectLastFollowingBeaconVersion,
   selectLastStarredBeaconVersion,
 } from '../selectors/gui'
-import { selectCategoryData } from '../selectors/promotions'
+import {
+  selectAuthPromotionals,
+  selectCategoryData,
+  selectIsPagePromotion,
+  selectPagePromotionals,
+} from '../selectors/promotions'
 import { selectPathname, selectViewNameFromRoute } from '../selectors/routing'
 import { selectUserFromUsername } from '../selectors/user'
 import { trackEvent } from '../actions/analytics'
@@ -31,7 +36,7 @@ import {
   HeroProfile,
   HeroPromotionAuth,
   HeroPromotionCategory,
-  HeroPromotionSampled,
+  HeroPromotionPage,
 } from '../components/heros/HeroRenderables'
 
 const selectJson = state => get(state, 'json')
@@ -64,18 +69,27 @@ export const selectBroadcast = createSelector(
 
 function mapStateToProps(state, props) {
   const user = selectUserFromUsername(state, props)
+  const isAuthentication = selectIsAuthentication(state)
+  const isPagePromotion = selectIsPagePromotion(state)
+  let promotions
+  if (isAuthentication) {
+    promotions = selectAuthPromotionals(state)
+  } else if (isPagePromotion) {
+    promotions = selectPagePromotionals(state)
+  }
   return {
+    authPromotionals: selectAuthPromotionals(state),
     broadcast: selectBroadcast(state),
     categoryData: selectCategoryData(state),
     dpi: selectCoverDPI(state),
-    isAuthentication: selectIsAuthentication(state),
+    isAuthentication,
     isBackgroundCycle: selectIsBackgroundCycle(state),
     isLoggedIn: selectIsLoggedIn(state),
-    isSampledPromotion: false,
+    isPagePromotion,
     isUserProfile: selectIsUserProfile(state, props),
     json: selectJson(state),
+    promotions,
     pathname: selectPathname(state),
-    promotions: state.promotions.authentication || [],
     useGif: user && (user.viewsAdultContent || !user.postsAdultContent),
     userCoverImage: user && user.coverImage,
     userId: user && `${user.id}`,
@@ -93,7 +107,7 @@ class HeroContainer extends Component {
     isAuthentication: PropTypes.bool,
     isBackgroundCycle: PropTypes.bool,
     isLoggedIn: PropTypes.bool.isRequired,
-    isSampledPromotion: PropTypes.bool,
+    isPagePromotion: PropTypes.bool,
     isUserProfile: PropTypes.bool,
     json: PropTypes.object,
     pathname: PropTypes.string.isRequired,
@@ -121,13 +135,12 @@ class HeroContainer extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { broadcast, isSampledPromotion, pathname } = nextProps
+    const { broadcast, isPagePromotion, pathname } = nextProps
     const hasPathChanged = this.props.pathname !== pathname
 
-    if ((hasPathChanged && isSampledPromotion) || !this.state.promotion) {
+    if ((hasPathChanged && isPagePromotion) || !this.state.promotion) {
       this.setState({ promotion: sample(nextProps.promotions) })
     } else if (hasPathChanged || !this.state.promotion) {
-      // TODO epic/promos-2.0 Should be handed the promotion from the category API
       this.setState({ promotion: sample(nextProps.promotions) })
     }
 
@@ -148,9 +161,9 @@ class HeroContainer extends Component {
   }
 
   onClickTrackCredits = () => {
-    const { dispatch, categoryData, isSampledPromotion } = this.props
+    const { dispatch, categoryData, isPagePromotion } = this.props
     // TODO epic/promos-2.0 This is going to change, waiting for feedback in the google doc
-    const label = `${isSampledPromotion || categoryData ? 'banderole' : 'authentication'}-credits-clicked`
+    const label = `${isPagePromotion || categoryData ? 'banderole' : 'authentication'}-credits-clicked`
     dispatch(trackEvent(label))
   }
 
@@ -190,7 +203,8 @@ class HeroContainer extends Component {
     const name = get(category, 'name', '')
     const description = get(category, 'description', '')
     const isSponsored = get(category, 'isSponsored', '')
-    // TODO: grab cta label/url from the category
+    const ctaCaption = get(category, 'ctaCaption')
+    const ctaHref = get(category, 'ctaHref')
     const promotional = sample(promotionals)
     const sources = get(promotional, 'image')
     const user = getLinkObject(promotional, 'user', json)
@@ -201,6 +215,8 @@ class HeroContainer extends Component {
       creditLabel,
       creditSources,
       creditUsername,
+      ctaCaption,
+      ctaHref,
       description,
       dpi,
       isLoggedIn,
@@ -210,24 +226,27 @@ class HeroContainer extends Component {
     return <HeroPromotionCategory key="HeroPromotionCategory" {...props} />
   }
 
-  getHeroPromotionSampled() {
-    const { dpi, isLoggedIn } = this.props
+  getHeroPromotionPage() {
+    const { dpi, isLoggedIn, json } = this.props
     const { promotion } = this.state
-    const caption = get(promotion, 'caption', '')
-    const creditSources = get(promotion, 'avatar', null)
-    const creditUsername = get(promotion, 'username', null)
-    const ctaCaption = get(promotion, 'cta.caption')
-    const ctaHref = get(promotion, 'cta.href')
-    const sources = get(promotion, 'coverImage', null)
-    const props = { caption, creditSources, creditUsername, dpi, sources }
+    const header = get(promotion, 'header', '')
+    const subheader = get(promotion, 'subheader', '')
+    const user = getLinkObject(promotion, 'user', json)
+    const creditSources = get(user, 'avatar', null)
+    const creditUsername = get(user, 'username', null)
+    const ctaCaption = get(promotion, 'ctaCaption')
+    const ctaHref = get(promotion, 'ctaHref')
+    const sources = get(promotion, 'image', null)
+    const props = { creditSources, creditUsername, dpi, header, sources, subheader }
     const ctaProps = { ctaCaption, ctaHref, isLoggedIn }
-    return <HeroPromotionSampled key="HeroPromotionSampled" {...props} {...ctaProps} />
+    return <HeroPromotionPage key="HeroPromotionPage" {...props} {...ctaProps} />
   }
 
   render() {
     const children = []
     const { broadcast } = this.state
-    const { categoryData, isAuthentication, isBackgroundCycle, isUserProfile, userId } = this.props
+    const { categoryData, isAuthentication, isBackgroundCycle,
+      isPagePromotion, isUserProfile, userId } = this.props
 
     if (broadcast) {
       const props = { broadcast, onDismiss: this.onDismissBroadcast }
@@ -237,9 +256,8 @@ class HeroContainer extends Component {
     // Pick a background
     if (categoryData) {
       children.push(this.getHeroPromotionCategory())
-    // }
-    // else if (isSampledPromotion) {
-    //   children.push(this.getHeroPromotionSampled())
+    } else if (isPagePromotion) {
+      children.push(this.getHeroPromotionPage())
     } else if (isUserProfile && userId) {
       children.push(this.getHeroProfile())
     } else if (isAuthentication) {
