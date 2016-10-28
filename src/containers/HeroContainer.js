@@ -68,6 +68,7 @@ export const selectBroadcast = createSelector(
 )
 
 function mapStateToProps(state, props) {
+  const categoryData = selectCategoryData(state)
   const user = selectUserFromUsername(state, props)
   const isAuthentication = selectIsAuthentication(state)
   const isPagePromotion = selectIsPagePromotion(state)
@@ -76,11 +77,13 @@ function mapStateToProps(state, props) {
     promotions = selectAuthPromotionals(state)
   } else if (isPagePromotion) {
     promotions = selectPagePromotionals(state)
+  } else if (categoryData) {
+    promotions = categoryData.promotionals
   }
   return {
     authPromotionals: selectAuthPromotionals(state),
     broadcast: selectBroadcast(state),
-    categoryData: selectCategoryData(state),
+    categoryData,
     dpi: selectCoverDPI(state),
     isAuthentication,
     isBackgroundCycle: selectIsBackgroundCycle(state),
@@ -199,15 +202,15 @@ class HeroContainer extends Component {
 
   getHeroPromotionCategory() {
     const { categoryData, dpi, isLoggedIn, json } = this.props
-    const { category, promotionals } = categoryData
+    const { category } = categoryData
+    const { promotion } = this.state
     const name = get(category, 'name', '')
     const description = get(category, 'description', '')
     const isSponsored = get(category, 'isSponsored', '')
     const ctaCaption = get(category, 'ctaCaption')
     const ctaHref = get(category, 'ctaHref')
-    const promotional = sample(promotionals)
-    const sources = get(promotional, 'image')
-    const user = getLinkObject(promotional, 'user', json)
+    const sources = get(promotion, 'image')
+    const user = getLinkObject(promotion, 'user', json)
     const creditSources = get(user, 'avatar', null)
     const creditUsername = get(user, 'username', null)
     const creditLabel = isSponsored ? 'Sponsored by' : 'Posted by'
