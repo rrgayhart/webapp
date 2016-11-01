@@ -114,6 +114,10 @@ Hero Promotion */
   font-size: 18px;
 }
 
+.HeroPromotionCategoryCopy {
+  margin-top: 40px;
+}
+
 .HeroPromotionCTA {
   margin-top: 20px;
   line-height: 1.3;
@@ -154,7 +158,7 @@ Hero Promotion */
   }
 
   .HeroPromotionCaption.isCentered {
-    margin: 0 20px;
+    margin: 0 auto;
   }
 
   .HeroPromotionHeading {
@@ -178,10 +182,6 @@ Hero Promotion */
 @media (--break-4) {
   .HeroPromotionCaption {
     left: 40px;
-  }
-
-  .HeroPromotionCaption.isCentered {
-    margin: 0 auto;
   }
 
   .HeroPromotionCredits {
