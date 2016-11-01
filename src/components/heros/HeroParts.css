@@ -165,6 +165,10 @@ Hero Promotion */
     font-size: 48px;
   }
 
+  .HeroPromotionSubheading {
+    font-size: 28px;
+  }
+
   .HeroPromotionCategoryHeading {
     font-size: 24px;
   }
