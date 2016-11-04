@@ -32,9 +32,14 @@ export const FOLLOWING = {
 }
 
 export const META = {
+  ALL_PAGE_DESCRIPTION: 'Discover work on Ello in Art, Fashion, Photography, Design, Architecture, Illustration, GIFs, 3D, Writing, Music, Textile, Skate and Cycling.',
   DESCRIPTION: 'Welcome to the Creators Network. Ello is a community to discover, discuss, publish, share and promote the things you are passionate about.',
+  FEATURED_PAGE_DESCRIPTION: 'Welcome to the Creators Network. Ello is a community to discover, discuss, publish, share and promote the things you are passionate about.',
   IMAGE: '/apple-touch-icon.png',
+  RECENT_PAGE_DESCRIPTION: 'Discover recent work from creators on Ello in Art, Fashion, Photography, Design, Architecture, Illustration, GIFs, Writing, Music, Textile, Skate and Cycling.',
+  SEARCH_PAGE_DESCRIPTION: 'Find work from creators on Ello in Art, Fashion, Photography, Design, Architecture, Illustration, GIFs, 3D, Writing, Music, Textile, Skate and Cycling.',
   TITLE: 'Ello | The Creators Network.',
+  TRENDING_PAGE_DESCRIPTION: 'Explore trending work on Ello in Art, Fashion, Photography, Design, Architecture, Illustration, GIFs, 3D, Writing, Music, Textile, Skate and Cycling.',
 }
 
 export const PREFERENCES = {

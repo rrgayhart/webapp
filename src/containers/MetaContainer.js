@@ -3,9 +3,11 @@ import shallowCompare from 'react-addons-shallow-compare'
 import { connect } from 'react-redux'
 import { createSelector } from 'reselect'
 import Helmet from 'react-helmet'
+import trunc from 'trunc-html'
 import { META } from '../constants/locales/en'
-import { selectPathname, selectViewNameFromRoute } from '../selectors/routing'
+import { selectCategoryPageTitle } from '../selectors/categories'
 import { selectPagination } from '../selectors/pagination'
+import { selectParamsType } from '../selectors/params'
 import {
   selectPostMetaCanonicalUrl,
   selectPostMetaDescription,
@@ -14,12 +16,50 @@ import {
   selectPostMetaTitle,
   selectPostMetaUrl,
 } from '../selectors/post'
+import { selectCategoryData, selectPagePromotionals } from '../selectors/promotions'
+import { selectPathname, selectViewNameFromRoute } from '../selectors/routing'
 import {
   selectUserMetaDescription,
   selectUserMetaImage,
   selectUserMetaRobots,
   selectUserMetaTitle,
 } from '../selectors/user'
+
+export const selectDiscoverMetaData = createSelector(
+  [selectParamsType, selectPagePromotionals, selectCategoryData, selectCategoryPageTitle],
+  (type, pagePromotionals, categoryData, pageTitle) => {
+    const titlePrefix = pageTitle ? `${pageTitle} | ` : ''
+    const title = `${titlePrefix}Ello`
+    let description = ''
+    let image = pagePromotionals && pagePromotionals[Object.keys(pagePromotionals)[0]] ?
+      pagePromotionals[Object.keys(pagePromotionals)[0]].image.hdpi.url : META.IMAGE
+    switch (type) {
+      case undefined:
+      case 'featured':
+      case 'recommended':
+        description = META.FEATURED_PAGE_DESCRIPTION
+        break
+      case 'recent':
+        description = META.RECENT_PAGE_DESCRIPTION
+        break
+      case 'trending':
+        description = META.TRENDING_PAGE_DESCRIPTION
+        break
+      case 'all':
+        description = META.ALL_PAGE_DESCRIPTION
+        break
+      default: {
+        if (!categoryData) { description = null }
+        const { category, promotionals } = categoryData
+        description = category && category.description ?
+          trunc(category.description, 160).text : null
+        image = promotionals[0].image.hdpi.url
+        break
+      }
+    }
+    return { description, image, title }
+  }
+)
 
 const selectMetaPageType = createSelector(
   [selectViewNameFromRoute], viewName =>
@@ -29,6 +69,7 @@ const selectMetaPageType = createSelector(
 function mapStateToProps(state, props) {
   const pagination = selectPagination(state, props)
   return {
+    discoverMetaData: selectDiscoverMetaData(state, props),
     metaPageType: selectMetaPageType(state, props),
     nextPage: pagination ? pagination.next : null,
     pathname: selectPathname(state),
@@ -42,11 +83,13 @@ function mapStateToProps(state, props) {
     userMetaImage: selectUserMetaImage(state, props),
     userMetaRobots: selectUserMetaRobots(state, props),
     userMetaTitle: selectUserMetaTitle(state, props),
+    viewName: selectViewNameFromRoute(state),
   }
 }
 
 class MetaContainer extends Component {
   static propTypes = {
+    discoverMetaData: PropTypes.object,
     metaPageType: PropTypes.string,
     nextPage: PropTypes.string,
     pathname: PropTypes.string,
@@ -60,6 +103,7 @@ class MetaContainer extends Component {
     userMetaImage: PropTypes.string,
     userMetaRobots: PropTypes.string,
     userMetaTitle: PropTypes.string,
+    viewName: PropTypes.string,
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -125,11 +169,17 @@ class MetaContainer extends Component {
   }
 
   getTags() {
-    const { metaPageType, postMetaTitle, userMetaTitle } = this.props
+    const { discoverMetaData, metaPageType, postMetaTitle, userMetaTitle, viewName } = this.props
     if (metaPageType === 'postDetailTags' && postMetaTitle) {
       return this.getPostDetailTags()
     } else if (metaPageType === 'userDetailTags' && userMetaTitle) {
       return this.getUserDetailTags()
+    } else if (viewName === 'discover') {
+      return this.getDefaultTags(
+        discoverMetaData.title,
+        discoverMetaData.image,
+        discoverMetaData.description
+      )
     }
     return this.getDefaultTags()
   }
