@@ -3,11 +3,9 @@ import shallowCompare from 'react-addons-shallow-compare'
 import { connect } from 'react-redux'
 import { createSelector } from 'reselect'
 import Helmet from 'react-helmet'
-import trunc from 'trunc-html'
 import { META } from '../constants/locales/en'
-import { selectCategoryPageTitle } from '../selectors/categories'
+import { selectDiscoverMetaData } from '../selectors/categories'
 import { selectPagination } from '../selectors/pagination'
-import { selectParamsType } from '../selectors/params'
 import {
   selectPostMetaCanonicalUrl,
   selectPostMetaDescription,
@@ -16,7 +14,6 @@ import {
   selectPostMetaTitle,
   selectPostMetaUrl,
 } from '../selectors/post'
-import { selectCategoryData, selectPagePromotionals } from '../selectors/promotions'
 import { selectPathname, selectViewNameFromRoute } from '../selectors/routing'
 import {
   selectUserMetaDescription,
@@ -24,42 +21,6 @@ import {
   selectUserMetaRobots,
   selectUserMetaTitle,
 } from '../selectors/user'
-
-export const selectDiscoverMetaData = createSelector(
-  [selectParamsType, selectPagePromotionals, selectCategoryData, selectCategoryPageTitle],
-  (type, pagePromotionals, categoryData, pageTitle) => {
-    const titlePrefix = pageTitle ? `${pageTitle} | ` : ''
-    const title = `${titlePrefix}Ello`
-    let description = ''
-    let image = pagePromotionals && pagePromotionals[Object.keys(pagePromotionals)[0]] ?
-      pagePromotionals[Object.keys(pagePromotionals)[0]].image.hdpi.url : META.IMAGE
-    switch (type) {
-      case undefined:
-      case 'featured':
-      case 'recommended':
-        description = META.FEATURED_PAGE_DESCRIPTION
-        break
-      case 'recent':
-        description = META.RECENT_PAGE_DESCRIPTION
-        break
-      case 'trending':
-        description = META.TRENDING_PAGE_DESCRIPTION
-        break
-      case 'all':
-        description = META.ALL_PAGE_DESCRIPTION
-        break
-      default: {
-        if (!categoryData) { description = null }
-        const { category, promotionals } = categoryData
-        description = category && category.description ?
-          trunc(category.description, 160).text : null
-        image = promotionals[0].image.hdpi.url
-        break
-      }
-    }
-    return { description, image, title }
-  }
-)
 
 const selectMetaPageType = createSelector(
   [selectViewNameFromRoute], viewName =>
@@ -110,7 +71,7 @@ class MetaContainer extends Component {
     return shallowCompare(this, nextProps, nextState)
   }
 
-  getDefaultTags(title = META.TITLE, image = META.IMAGE, description = META.DESCRIPTION) {
+  getDefaultTags({ description = META.DESCRIPTION, image = META.IMAGE, title = META.TITLE } = {}) {
     const { nextPage, pathname } = this.props
     const url = `${ENV.AUTH_DOMAIN}${pathname}`
     const meta = [
@@ -133,7 +94,11 @@ class MetaContainer extends Component {
 
   getUserDetailTags() {
     const { userMetaDescription, userMetaImage, userMetaRobots, userMetaTitle } = this.props
-    const defaultTags = this.getDefaultTags(userMetaTitle, userMetaImage, userMetaDescription)
+    const defaultTags = this.getDefaultTags({
+      description: userMetaDescription,
+      image: userMetaImage,
+      title: userMetaTitle,
+    })
     const meta = [
       ...defaultTags.meta,
       { name: 'robots', content: userMetaRobots },
@@ -169,17 +134,50 @@ class MetaContainer extends Component {
   }
 
   getTags() {
-    const { discoverMetaData, metaPageType, postMetaTitle, userMetaTitle, viewName } = this.props
+    const {
+      discoverMetaData,
+      metaPageType,
+      pathname,
+      postMetaTitle,
+      userMetaTitle,
+      viewName,
+    } = this.props
     if (metaPageType === 'postDetailTags' && postMetaTitle) {
       return this.getPostDetailTags()
     } else if (metaPageType === 'userDetailTags' && userMetaTitle) {
       return this.getUserDetailTags()
     } else if (viewName === 'discover') {
-      return this.getDefaultTags(
-        discoverMetaData.title,
-        discoverMetaData.image,
-        discoverMetaData.description
-      )
+      return this.getDefaultTags({
+        description: discoverMetaData.description,
+        image: discoverMetaData.image,
+        title: discoverMetaData.title,
+      })
+    } else if (viewName === 'search') {
+      return this.getDefaultTags({
+        description: META.SEARCH_PAGE_DESCRIPTION,
+        image: discoverMetaData.image,
+        title: META.SEARCH_TITLE,
+      })
+    } else if (viewName === 'authentication') {
+      switch (pathname) {
+        case '/enter':
+          return this.getDefaultTags({
+            description: META.ENTER_PAGE_DESCRIPTION,
+            title: META.ENTER_TITLE,
+          })
+        case '/forgot-password':
+          return this.getDefaultTags({
+            description: META.FORGOT_PAGE_DESCRIPTION,
+            title: META.FORGOT_TITLE,
+          })
+        case '/signup':
+          return this.getDefaultTags({
+            description: META.SIGNUP_PAGE_DESCRIPTION,
+            title: META.SIGNUP_TITLE,
+          })
+        default:
+          return this.getDefaultTags()
+      }
     }
     return this.getDefaultTags()
   }

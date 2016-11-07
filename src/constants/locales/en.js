@@ -34,10 +34,17 @@ export const FOLLOWING = {
 export const META = {
   ALL_PAGE_DESCRIPTION: 'Discover work on Ello in Art, Fashion, Photography, Design, Architecture, Illustration, GIFs, 3D, Writing, Music, Textile, Skate and Cycling.',
   DESCRIPTION: 'Welcome to the Creators Network. Ello is a community to discover, discuss, publish, share and promote the things you are passionate about.',
+  ENTER_PAGE_DESCRIPTION: 'Welcome back to Ello. Sign in now to publish, share and promote your work and ideas, check your notifications, and collaborate.',
+  ENTER_TITLE: 'Login | Ello',
   FEATURED_PAGE_DESCRIPTION: 'Welcome to the Creators Network. Ello is a community to discover, discuss, publish, share and promote the things you are passionate about.',
+  FORGOT_PAGE_DESCRIPTION: 'Welcome back to Ello. Enter your email to reset your password.',
+  FORGOT_TITLE: 'Forgot Password | Ello',
   IMAGE: '/apple-touch-icon.png',
+  SIGNUP_PAGE_DESCRIPTION: 'Join the Creators Network. Ello is a networked marketplace and publishing platform providing creators visibility, influence and opportunity.',
+  SIGNUP_TITLE: 'Sign up | Ello',
   RECENT_PAGE_DESCRIPTION: 'Discover recent work from creators on Ello in Art, Fashion, Photography, Design, Architecture, Illustration, GIFs, Writing, Music, Textile, Skate and Cycling.',
   SEARCH_PAGE_DESCRIPTION: 'Find work from creators on Ello in Art, Fashion, Photography, Design, Architecture, Illustration, GIFs, 3D, Writing, Music, Textile, Skate and Cycling.',
+  SEARCH_TITLE: 'Search | Ello',
   TITLE: 'Ello | The Creators Network.',
   TRENDING_PAGE_DESCRIPTION: 'Explore trending work on Ello in Art, Fashion, Photography, Design, Architecture, Illustration, GIFs, 3D, Writing, Music, Textile, Skate and Cycling.',
 }

@@ -115,5 +115,9 @@ describe('categories selectors', () => {
       expect(tabs[9]).to.have.property('to', '/discover/collage')
     })
   })
+
+  context('#selectDiscoverMetaData', () => {
+    it('should be tested')
+  })
 })
 
