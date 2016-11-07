@@ -1,8 +1,11 @@
 import { createSelector } from 'reselect'
 import get from 'lodash/get'
 import startCase from 'lodash/startCase'
+import trunc from 'trunc-html'
+import { META } from '../constants/locales/en'
 import { selectParamsType } from './params'
 import { selectAllCategories } from './pages'
+import { selectCategoryData, selectPagePromotionals } from './promotions'
 
 export function sortCategories(a, b) {
   if (a.order < b.order) {
@@ -115,6 +118,42 @@ export const selectCategoryTabs = createSelector(
       })
     }
     return tabs
+  }
+)
+
+export const selectDiscoverMetaData = createSelector(
+  [selectParamsType, selectPagePromotionals, selectCategoryData, selectCategoryPageTitle],
+  (type, pagePromotionals, categoryData, pageTitle) => {
+    const titlePrefix = pageTitle ? `${pageTitle} | ` : ''
+    const title = `${titlePrefix}Ello`
+    let description = ''
+    let image = pagePromotionals && pagePromotionals[Object.keys(pagePromotionals)[0]] ?
+      pagePromotionals[Object.keys(pagePromotionals)[0]].image.hdpi.url : META.IMAGE
+    switch (type) {
+      case undefined:
+      case 'featured':
+      case 'recommended':
+        description = META.FEATURED_PAGE_DESCRIPTION
+        break
+      case 'recent':
+        description = META.RECENT_PAGE_DESCRIPTION
+        break
+      case 'trending':
+        description = META.TRENDING_PAGE_DESCRIPTION
+        break
+      case 'all':
+        description = META.ALL_PAGE_DESCRIPTION
+        break
+      default: {
+        if (!categoryData) { description = null }
+        const { category, promotionals } = categoryData
+        description = category && category.description ?
+          trunc(category.description, 160).text : null
+        image = promotionals[0].image.hdpi.url
+        break
+      }
+    }
+    return { description, image, title }
   }
 )
 

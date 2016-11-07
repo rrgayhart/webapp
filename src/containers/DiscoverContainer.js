@@ -40,14 +40,11 @@ export function getStreamAction(type) {
 function mapStateToProps(state, props) {
   const isLoggedIn = selectIsLoggedIn(state)
   const pageTitle = selectCategoryPageTitle(state, props)
-  const titlePrefix = pageTitle ? `${pageTitle} | ` : ''
-  const title = `${titlePrefix} Ello`
   return {
     isLoggedIn,
     pageTitle,
     paramsType: selectParamsType(state, props),
     pathname: selectPropsPathname(state, props),
-    title,
   }
 }
 
@@ -58,7 +55,6 @@ class DiscoverContainer extends Component {
     pageTitle: PropTypes.string,
     paramsType: PropTypes.string.isRequired,
     pathname: PropTypes.string.isRequired,
-    title: PropTypes.string.isRequired,
   }
 
   static defaultProps = {
@@ -86,13 +82,11 @@ class DiscoverContainer extends Component {
 
   render() {
     const { isLoggedIn, pageTitle, paramsType, pathname } = this.props
-    const { title } = this.props
     const props = {
       isLoggedIn,
       pageTitle,
       pathname,
       streamAction: getStreamAction(paramsType),
-      title,
     }
     return <Discover key={`discover_${paramsType}`} {...props} />
   }

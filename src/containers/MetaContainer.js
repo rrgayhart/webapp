@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import { createSelector } from 'reselect'
 import Helmet from 'react-helmet'
 import { META } from '../constants/locales/en'
-import { selectPathname, selectViewNameFromRoute } from '../selectors/routing'
+import { selectDiscoverMetaData } from '../selectors/categories'
 import { selectPagination } from '../selectors/pagination'
 import {
   selectPostMetaCanonicalUrl,
@@ -14,6 +14,7 @@ import {
   selectPostMetaTitle,
   selectPostMetaUrl,
 } from '../selectors/post'
+import { selectPathname, selectViewNameFromRoute } from '../selectors/routing'
 import {
   selectUserMetaDescription,
   selectUserMetaImage,
@@ -29,6 +30,7 @@ const selectMetaPageType = createSelector(
 function mapStateToProps(state, props) {
   const pagination = selectPagination(state, props)
   return {
+    discoverMetaData: selectDiscoverMetaData(state, props),
     metaPageType: selectMetaPageType(state, props),
     nextPage: pagination ? pagination.next : null,
     pathname: selectPathname(state),
@@ -42,11 +44,13 @@ function mapStateToProps(state, props) {
     userMetaImage: selectUserMetaImage(state, props),
     userMetaRobots: selectUserMetaRobots(state, props),
     userMetaTitle: selectUserMetaTitle(state, props),
+    viewName: selectViewNameFromRoute(state),
   }
 }
 
 class MetaContainer extends Component {
   static propTypes = {
+    discoverMetaData: PropTypes.object,
     metaPageType: PropTypes.string,
     nextPage: PropTypes.string,
     pathname: PropTypes.string,
@@ -60,13 +64,14 @@ class MetaContainer extends Component {
     userMetaImage: PropTypes.string,
     userMetaRobots: PropTypes.string,
     userMetaTitle: PropTypes.string,
+    viewName: PropTypes.string,
   }
 
   shouldComponentUpdate(nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState)
   }
 
-  getDefaultTags(title = META.TITLE, image = META.IMAGE, description = META.DESCRIPTION) {
+  getDefaultTags({ description = META.DESCRIPTION, image = META.IMAGE, title = META.TITLE } = {}) {
     const { nextPage, pathname } = this.props
     const url = `${ENV.AUTH_DOMAIN}${pathname}`
     const meta = [
@@ -89,7 +94,11 @@ class MetaContainer extends Component {
 
   getUserDetailTags() {
     const { userMetaDescription, userMetaImage, userMetaRobots, userMetaTitle } = this.props
-    const defaultTags = this.getDefaultTags(userMetaTitle, userMetaImage, userMetaDescription)
+    const defaultTags = this.getDefaultTags({
+      description: userMetaDescription,
+      image: userMetaImage,
+      title: userMetaTitle,
+    })
     const meta = [
       ...defaultTags.meta,
       { name: 'robots', content: userMetaRobots },
@@ -125,11 +134,50 @@ class MetaContainer extends Component {
   }
 
   getTags() {
-    const { metaPageType, postMetaTitle, userMetaTitle } = this.props
+    const {
+      discoverMetaData,
+      metaPageType,
+      pathname,
+      postMetaTitle,
+      userMetaTitle,
+      viewName,
+    } = this.props
     if (metaPageType === 'postDetailTags' && postMetaTitle) {
       return this.getPostDetailTags()
     } else if (metaPageType === 'userDetailTags' && userMetaTitle) {
       return this.getUserDetailTags()
+    } else if (viewName === 'discover') {
+      return this.getDefaultTags({
+        description: discoverMetaData.description,
+        image: discoverMetaData.image,
+        title: discoverMetaData.title,
+      })
+    } else if (viewName === 'search') {
+      return this.getDefaultTags({
+        description: META.SEARCH_PAGE_DESCRIPTION,
+        image: discoverMetaData.image,
+        title: META.SEARCH_TITLE,
+      })
+    } else if (viewName === 'authentication') {
+      switch (pathname) {
+        case '/enter':
+          return this.getDefaultTags({
+            description: META.ENTER_PAGE_DESCRIPTION,
+            title: META.ENTER_TITLE,
+          })
+        case '/forgot-password':
+          return this.getDefaultTags({
+            description: META.FORGOT_PAGE_DESCRIPTION,
+            title: META.FORGOT_TITLE,
+          })
+        case '/signup':
+          return this.getDefaultTags({
+            description: META.SIGNUP_PAGE_DESCRIPTION,
+            title: META.SIGNUP_TITLE,
+          })
+        default:
+          return this.getDefaultTags()
+      }
     }
     return this.getDefaultTags()
   }
