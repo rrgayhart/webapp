@@ -124,12 +124,14 @@ class HeroContainer extends Component {
   static childContextTypes = {
     onClickShareProfile: PropTypes.func,
     onClickTrackCredits: PropTypes.func,
+    onClickTrackCTA: PropTypes.func,
   }
 
   getChildContext() {
     return {
       onClickShareProfile: this.onClickShareProfile,
       onClickTrackCredits: this.onClickTrackCredits,
+      onClickTrackCTA: this.onClickTrackCTA,
     }
   }
 
@@ -165,8 +167,21 @@ class HeroContainer extends Component {
 
   onClickTrackCredits = () => {
     const { dispatch, categoryData, isPagePromotion } = this.props
-    // TODO epic/promos-2.0 This is going to change, waiting for feedback in the google doc
-    const label = `${isPagePromotion || categoryData ? 'banderole' : 'authentication'}-credits-clicked`
+    let label = 'promoByline_clicked_'
+    if (categoryData) {
+      label += categoryData.category.name
+    } else if (isPagePromotion) {
+      label += 'general'
+    } else {
+      label += 'auth'
+    }
+    dispatch(trackEvent(label))
+  }
+
+  onClickTrackCTA = () => {
+    const { dispatch, categoryData } = this.props
+    let label = 'promoCTA_clicked_'
+    label += categoryData ? categoryData.category.name : 'general'
     dispatch(trackEvent(label))
   }
 
