@@ -34,13 +34,17 @@ HeroPromotionCredits.propTypes = {
 
 // -------------------------------------
 
-export const HeroPromotionCTA = ({ caption, isLoggedIn, to }) => {
+export const HeroPromotionCTA = ({ caption, isLoggedIn, to }, { onClickTrackCTA }) => {
   if (caption && to) {
-    return <a className="HeroPromotionCTA" href={to}>{caption}</a>
+    return <a className="HeroPromotionCTA" href={to} onClick={onClickTrackCTA}>{caption}</a>
   } else if (!isLoggedIn) {
-    return <Link className="HeroPromotionCTA" to="https://ello.co/signup">Sign Up</Link>
+    return <Link className="HeroPromotionCTA" onClick={onClickTrackCTA} to="https://ello.co/signup">Sign Up</Link>
   }
   return null
+}
+
+HeroPromotionCTA.contextTypes = {
+  onClickTrackCredits: PropTypes.func.isRequired,
 }
 
 HeroPromotionCTA.propTypes = {
